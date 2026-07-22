@@ -1,0 +1,211 @@
+*{
+
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+
+}
+
+
+body{
+
+    font-family:"Segoe UI",sans-serif;
+
+    background:
+
+    radial-gradient(circle at top,#2c2d34 0%,#17181d 45%,#0d0e11 100%);
+
+    color:white;
+
+    overflow:hidden;
+
+}
+
+
+
+/* ===== COUNTER ===== */
+
+
+.topbar{
+
+    position:fixed;
+
+    top:0;
+
+    left:0;
+
+    width:100%;
+
+    height:80px;
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    align-items:center;
+
+    padding:0 45px;
+
+    z-index:100;
+
+}
+
+
+
+.counter{
+
+    background:rgba(255,255,255,.08);
+
+    padding:12px 24px;
+
+    border-radius:40px;
+
+    backdrop-filter:blur(12px);
+
+    font-size:18px;
+
+}
+
+
+
+/* ===== BOOK ===== */
+
+
+.viewer{
+
+    width:100vw;
+
+    height:100vh;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+}
+
+
+
+#book{
+
+    width:1080px;
+
+    height:720px;
+
+    position:relative;
+
+}
+
+
+
+/* ===== BLACK BOOK SPINE ===== */
+
+
+#book::after{
+
+    content:"";
+
+    position:absolute;
+
+    top:0;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    width:22px;
+
+    height:100%;
+
+    background:#000;
+
+    pointer-events:none;
+
+    z-index:20;
+
+}
+
+
+
+/* ===== PAGES ===== */
+
+
+.page{
+
+    background:white;
+
+}
+
+
+
+.page img{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:contain;
+
+}
+
+
+
+/* ===== BUTTONS ===== */
+
+
+button{
+
+    position:fixed;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    width:70px;
+
+    height:70px;
+
+    border:none;
+
+    border-radius:50%;
+
+    font-size:34px;
+
+    cursor:pointer;
+
+    background:white;
+
+    color:#111;
+
+    z-index:200;
+
+    box-shadow:
+
+    0 12px 35px rgba(0,0,0,.35);
+
+}
+
+
+
+button:hover{
+
+    transform:translateY(-50%) scale(1.08);
+
+}
+
+
+
+#prev{
+
+    left:30px;
+
+}
+
+
+
+#next{
+
+    right:30px;
+
+}
