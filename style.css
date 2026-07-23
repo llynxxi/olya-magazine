@@ -234,7 +234,9 @@ body::before{
 
     transform:scale(.72);
 
-    filter:drop-shadow(0 35px 45px rgba(0,0,0,.7));
+    filter:
+drop-shadow(0 10px 20px rgba(0,0,0,.25))
+drop-shadow(0 35px 55px rgba(0,0,0,.45));
 
     cursor:grab;
 
@@ -274,6 +276,28 @@ body::before{
     height:100%;
 
     object-fit:fill;
+
+}
+.page::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    pointer-events:none;
+
+    background:
+    linear-gradient(
+        90deg,
+        rgba(255,255,255,.08) 0%,
+        rgba(255,255,255,.02) 15%,
+        rgba(0,0,0,.03) 50%,
+        rgba(255,255,255,.08) 100%
+    );
+
+    opacity:.65;
 
 }
 
@@ -317,11 +341,7 @@ body::before{
 
 
 
-#prev{
 
-    left:35px;
-
-}
 
 
 
