@@ -195,13 +195,17 @@ pageFlip.flipNext();
 
 
 
-document.getElementById("prev").onclick = ()=>{
+const prevButton = document.getElementById("prev");
 
+if (prevButton) {
 
-pageFlip.flipPrev();
+    prevButton.onclick = () => {
 
+        pageFlip.flipPrev();
 
-};
+    };
+
+}
 
 
 
