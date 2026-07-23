@@ -259,54 +259,24 @@ body::before{
 
 .page{
 
+    position:relative;
+    overflow:hidden;
     background:#111;
 
 }
 
-
-
 .page img{
+
+    display:block;
 
     width:100%;
 
     height:100%;
 
-    object-fit:cover;
+    object-fit:fill;
 
 }
 
-
-
-
-
-/* ================= NEW SPINE ================= */
-
-
-/* корешок находится под книгой, а не внутри страниц */
-
-.viewer::after{
-
-    content:"";
-
-    position:fixed;
-
-    left:50%;
-
-    top:50%;
-
-    transform:translate(-50%,-50%);
-
-    width:8px;
-
-    height:510px;
-
-    background:rgba(0,0,0,.7);
-
-    z-index:1;
-
-    pointer-events:none;
-
-}
 
 
 
