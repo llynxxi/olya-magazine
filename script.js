@@ -78,23 +78,13 @@ async function loadMagazine() {
         useMouseEvents: false
 
     });
-
     pageFlip.loadFromHTML(
 
-        document.querySelectorAll(".page")
+    document.querySelectorAll(".page")
 
-    );
+);
+console.log(pageFlip.getPageCount());
 
-    const counter = document.querySelector(".counter");
-
-    counter.textContent =
-        `01 / ${String(pages.length).padStart(2, "0")}`;
-        pageFlip.on("flip", (e) => {
-
-        counter.textContent =
-            `${String(e.data + 1).padStart(2, "0")} / ${String(pages.length).padStart(2, "0")}`;
-
-    });
 
     const container = document.querySelector(".viewer");
     if (!container) return;
