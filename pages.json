@@ -1,26 +1,30 @@
 [
- {
-  "image":"images/cover.jpg",
-  "title":"Cover"
- },
- {
-  "image":"images/alina.jpg",
-  "title":"Alina Kabaeva"
- },
- {
-  "image":"images/dinamo.jpg",
-  "title":"Dinamo Minsk"
- },
- {
-  "image":"images/britney.jpg",
-  "title":"Britney Spears"
- },
- {
-  "image":"images/tukavin.jpg",
-  "title":"Tukavin"
- },
- {
-  "image":"images/angelina.jpg",
-  "title":"Angelina Jolie"
- }
+  {
+    "image": "images/cover.jpg",
+    "title": "Cover"
+  },
+  {
+    "image": "images/alina.jpg",
+    "title": "Alina Kabaeva"
+  },
+  {
+    "image": "images/dinamo.jpg",
+    "title": "Dinamo Minsk"
+  },
+  {
+    "image": "images/britney.jpg",
+    "title": "Britney Spears"
+  },
+  {
+    "image": "images/tukavin.jpg",
+    "title": "Tukavin"
+  },
+  {
+    "image": "images/angelina.jpg",
+    "title": "Angelina Jolie"
+  },
+  {
+    "image": "images/eminem.jpg",
+    "title": "Eminem"
+  }
 ]

@@ -49,26 +49,36 @@ body::before{
     position:fixed;
 
     top:35px;
-
     left:35px;
 
     width:55px;
-
     height:55px;
 
-    border:none;
+    display:flex;
+    justify-content:center;
+    align-items:center;
 
+    border:none;
     border-radius:50%;
 
     background:rgba(255,255,255,.15);
 
     color:white;
 
-    font-size:28px;
+    font-size:30px;
+    line-height:1;
 
     cursor:pointer;
 
     z-index:500;
+
+    transition:.2s;
+
+}
+
+.menu-btn:hover{
+
+    background:rgba(255,255,255,.22);
 
 }
 
@@ -152,7 +162,63 @@ body::before{
     margin:40px 0;
 
 }
+.menu-content{
 
+    flex:1;
+
+    overflow-y:auto;
+
+    padding-right:8px;
+
+    min-height:0;
+
+}
+.menu-footer{
+
+    border-top:1px solid rgba(255,255,255,.25);
+
+    padding-top:20px;
+
+    margin-top:20px;
+
+}
+.menu-nav{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    gap:12px;
+
+}
+.menu-nav button{
+
+    flex:1;
+
+    height:42px;
+
+    border:none;
+
+    border-radius:10px;
+
+    background:rgba(255,255,255,.12);
+
+    color:white;
+
+    font-family:"Times New Roman",serif;
+
+    font-size:17px;
+
+    cursor:pointer;
+
+    transition:.2s;
+
+}
+.menu-nav button:hover{
+
+    background:rgba(255,255,255,.22);
+
+}
 
 
 #menu-pages p{
@@ -167,13 +233,6 @@ body::before{
 
 
 
-.issue{
-
-    position:absolute;
-
-    bottom:45px;
-
-}
 
 
 
@@ -229,10 +288,10 @@ body::before{
     width:1080px;
 
     height:720px;
+    transform: scale(.72);
 
     position:relative;
 
-    transform:scale(.72);
 
     filter:
 drop-shadow(0 10px 20px rgba(0,0,0,.25))
@@ -241,6 +300,8 @@ drop-shadow(0 35px 55px rgba(0,0,0,.45));
     cursor:grab;
 
     user-select:none;
+    will-change:transform;
+backface-visibility:hidden;
 
 }
 
@@ -347,7 +408,7 @@ drop-shadow(0 35px 55px rgba(0,0,0,.45));
 
 #next{
 
-    right:35px;
+    display:none !important;
 
 }
 
@@ -415,28 +476,6 @@ drop-shadow(0 35px 55px rgba(0,0,0,.45));
 
 
 
-/* ================= COUNTER ================= */
-
-
-.counter{
-
-    position:fixed;
-
-    top:95px;
-
-    right:35px;
-
-    padding:10px 22px;
-
-    border-radius:30px;
-
-    background:rgba(255,255,255,.15);
-
-    backdrop-filter:blur(10px);
-
-    z-index:500;
-
-}
 
 
 
@@ -445,5 +484,116 @@ drop-shadow(0 35px 55px rgba(0,0,0,.45));
 .camera.dragging{
 
     cursor:grabbing;
+
+}
+/* ================= BOTTOM NAVIGATION ================= */
+
+.bottom-bar{
+
+    position:fixed;
+
+    left:50%;
+    bottom:28px;
+
+    transform:translateX(-50%);
+
+    display:flex;
+    align-items:center;
+    gap:26px;
+
+    padding:10px 24px;
+
+    background:rgba(15,15,18,.72);
+
+    backdrop-filter:blur(12px);
+
+    border:1px solid rgba(255,255,255,.12);
+
+    border-radius:40px;
+
+    z-index:600;
+
+}
+
+.bottom-arrow{
+
+    border:none;
+
+    background:none;
+
+    color:white;
+
+    font-family:"Times New Roman", serif;
+
+    font-size:28px;
+
+    cursor:pointer;
+
+    transition:.2s;
+
+}
+
+.bottom-arrow:hover{
+
+    opacity:.65;
+
+}
+
+.bottom-bar .counter{
+
+    position:static;
+
+    background:none;
+
+    padding:0;
+
+    border-radius:0;
+
+    backdrop-filter:none;
+
+    font-size:16px;
+
+    letter-spacing:1px;
+
+    color:white;
+
+}
+/* ================= CLOSE MENU ================= */
+
+.close-menu{
+
+    position:absolute;
+
+    top:35px;
+
+    right:30px;
+
+    width:42px;
+
+    height:42px;
+
+    border:none;
+
+    background:none;
+
+    color:white;
+
+    font-size:26px;
+
+    font-family:"Times New Roman", serif;
+
+    cursor:pointer;
+
+    opacity:.75;
+
+    transition:.2s;
+
+}
+
+.close-menu:hover{
+
+    opacity:1;
+
+    transform:scale(1.08);
 
 }

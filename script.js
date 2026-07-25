@@ -1,205 +1,237 @@
-let pageFlip;
+let pageFlip = null;
 
-
+const baseScale = 0.72;
 let zoom = 1;
-
 let moveX = 0;
 let moveY = 0;
 
-
 let dragging = false;
-
+const zoomValue = document.getElementById("zoom-value");
+const zoomIn = document.getElementById("zoom-in");
+const zoomOut = document.getElementById("zoom-out");
+const zoomReset = document.getElementById("zoom-reset");
 let startX = 0;
 let startY = 0;
 
+async function loadMagazine() {
 
+    const response = await fetch("pages.json");
+    const pages = await response.json();
 
-async function loadMagazine(){
+    const book = document.getElementById("book");
+    const menuPages = document.getElementById("menu-pages");
 
+    const menu = document.querySelector(".menu");
+    const menuPrev = document.getElementById("menu-prev");
+    const menuNext = document.getElementById("menu-next");
 
-const response = await fetch("pages.json");
+    book.innerHTML = "";
+    menuPages.innerHTML = "";
 
-const pages = await response.json();
+    pages.forEach((item, index) => {
 
+        const page = document.createElement("div");
+        page.className = "page";
 
+        page.innerHTML = `
+            <img src="${item.image}" alt="${item.title}">
+        `;
 
-const book = document.getElementById("book");
+        book.appendChild(page);
 
-const menuPages = document.getElementById("menu-pages");
+        const menuItem = document.createElement("p");
 
-const menu = document.querySelector(".menu");
+        menuItem.textContent =
+            `${String(index + 1).padStart(2, "0")} — ${item.title}`;
 
+        menuItem.style.cursor = "pointer";
 
+        menuItem.addEventListener("click", () => {
 
+            pageFlip.turnToPage(index);
 
+            menu.classList.remove("active");
 
-pages.forEach((item,index)=>{
+        });
 
+        menuPages.appendChild(menuItem);
 
-const page = document.createElement("div");
+    });
 
+    pageFlip = new St.PageFlip(book, {
 
-page.className="page";
+        width: 540,
+        height: 720,
 
+        size: "fixed",
 
-page.innerHTML = `
+        showCover: true,
 
-<img src="${item.image}" alt="">
+        usePortrait: false,
 
-`;
+        drawShadow: false,
+        maxShadowOpacity: 0,
 
+        flippingTime: 450,
 
+        mobileScrollSupport: false,
+        useMouseEvents: false
 
-book.appendChild(page);
+    });
 
+    pageFlip.loadFromHTML(
 
+        document.querySelectorAll(".page")
 
+    );
 
+    const counter = document.querySelector(".counter");
 
+    counter.textContent =
+        `01 / ${String(pages.length).padStart(2, "0")}`;
+        pageFlip.on("flip", (e) => {
 
-const menuItem = document.createElement("p");
+        counter.textContent =
+            `${String(e.data + 1).padStart(2, "0")} / ${String(pages.length).padStart(2, "0")}`;
 
+    });
 
-menuItem.textContent =
+    const container = document.querySelector(".viewer");
+    if (!container) return;
 
-`${String(index+1).padStart(2,"0")} — ${item.title}`;
+    function updateTransform() {
 
+    book.style.transform =
+    `translate(${moveX}px, ${moveY}px) scale(${baseScale * zoom})`;
 
+    if (zoomValue) {
 
+        zoomValue.textContent = `${Math.round(zoom * 100)}%`;
 
-
-menuItem.style.cursor="pointer";
-
-
-
-menuItem.onclick = ()=>{
-
-
-pageFlip.turnToPage(index);
-
-
-menu.classList.remove("active");
-
-
-};
-
-
-
-
-menuPages.appendChild(menuItem);
-
-
-
-});
-
-
-
-
-
-
-
-
-
-pageFlip = new St.PageFlip(
-
-book,
-
-{
-
-width:540,
-
-height:720,
-
-size:"fixed",
-
-showCover:true,
-
-usePortrait:false,
-
-drawShadow:false,
-
-maxShadowOpacity:0,
-
-flippingTime:900,
-
-mobileScrollSupport:false,
-
-useMouseEvents:false
+    }
 
 }
 
-);
+    container.addEventListener("wheel", (e) => {
 
+        if (!e.ctrlKey) return;
 
+        e.preventDefault();
 
+        const delta = e.deltaY < 0 ? 0.1 : -0.1;
 
+        zoom += delta;
 
+        zoom = Math.min(Math.max(zoom, 1), 3);
 
+        updateTransform();
 
+    });
+    if (zoomIn) {
 
-pageFlip.loadFromHTML(
+    zoomIn.onclick = () => {
 
-document.querySelectorAll(".page")
+        zoom = Math.min(zoom + 0.1, 3);
 
-);
+        updateTransform();
 
+    };
 
+}
 
+if (zoomOut) {
 
+    zoomOut.onclick = () => {
 
+        zoom = Math.max(zoom - 0.1, 0.5);
 
+        updateTransform();
 
+    };
 
-const counter=document.querySelector(".counter");
+}
 
+if (zoomReset) {
 
+    zoomReset.onclick = () => {
 
-counter.textContent =
+        zoom = 1;
+        moveX = 0;
+        moveY = 0;
 
-`01 / ${String(pages.length).padStart(2,"0")}`;
+        updateTransform();
 
+    };
 
+}
 
+    container.addEventListener("mousedown", (e) => {
 
+        if (zoom <= 1) return;
 
+        dragging = true;
 
+        startX = e.clientX - moveX;
+        startY = e.clientY - moveY;
 
+        container.style.cursor = "grabbing";
 
-pageFlip.on("flip",(e)=>{
+    });
 
+    window.addEventListener("mousemove", (e) => {
 
-counter.textContent =
+        if (!dragging) return;
 
-`${String(e.data+1).padStart(2,"0")} / ${String(pages.length).padStart(2,"0")}`;
+        moveX = e.clientX - startX;
+        moveY = e.clientY - startY;
 
+        updateTransform();
 
+    });
 
-});
+    window.addEventListener("mouseup", () => {
 
+        dragging = false;
 
+        container.style.cursor = "grab";
 
+    });
+        const nextButton = document.getElementById("next");
+    const prevButton = document.getElementById("prev");
+    const bottomNext = document.getElementById("bottom-next");
+const bottomPrev = document.getElementById("bottom-prev");
 
+    if (nextButton) {
 
+        nextButton.onclick = () => {
 
+            pageFlip.flipNext();
 
+        };
 
+    }
+    if (bottomNext) {
 
-document.getElementById("next").onclick = ()=>{
+    bottomNext.onclick = () => {
 
+        pageFlip.flipNext();
 
-pageFlip.flipNext();
+    };
 
+}
 
-};
+    if (prevButton) {
 
+        prevButton.onclick = () => {
 
+            pageFlip.flipPrev();
 
+        };
 
-const prevButton = document.getElementById("prev");
+    }
+    if (bottomPrev) {
 
-if (prevButton) {
-
-    prevButton.onclick = () => {
+    bottomPrev.onclick = () => {
 
         pageFlip.flipPrev();
 
@@ -207,229 +239,76 @@ if (prevButton) {
 
 }
 
+    if (menuNext) {
 
+        menuNext.onclick = () => {
 
+            pageFlip.flipNext();
+            menu.classList.remove("active");
 
+        };
 
+    }
 
+    if (menuPrev) {
 
+        menuPrev.onclick = () => {
 
+            pageFlip.flipPrev();
+            menu.classList.remove("active");
 
-const menuButton=document.querySelector(".menu-btn");
+        };
 
+    }
 
+    const menuButton = document.getElementById("menu-button");
+    const closeMenu = document.getElementById("close-menu");
 
-menuButton.onclick = ()=>{
+    if (menuButton) {
 
+        menuButton.onclick = () => {
 
-menu.classList.toggle("active");
+            menu.classList.add("active");
 
+        };
 
-};
+    }
 
+    if (closeMenu) {
 
+        closeMenu.onclick = () => {
 
+            menu.classList.remove("active");
 
+        };
 
+    }
 
+    document.addEventListener("keydown", (e) => {
 
+        if (e.key === "ArrowRight") {
 
+            pageFlip.flipNext();
 
-const camera=document.querySelector(".camera");
+        }
 
+        if (e.key === "ArrowLeft") {
 
-const zoomValue=document.getElementById("zoom-value");
+            pageFlip.flipPrev();
 
+        }
 
+        if (e.key === "Escape") {
 
+            menu.classList.remove("active");
 
+        }
 
+    });
+    }
 
-function updateCamera(){
+loadMagazine().catch((error) => {
 
+    console.error(error);
 
-
-camera.style.transform =
-
-`translate(${moveX}px,${moveY}px) scale(${zoom})`;
-
-
-
-zoomValue.textContent =
-
-`${Math.round(zoom*100)}%`;
-
-
-
-}
-
-
-
-
-
-
-
-
-
-document.getElementById("zoom-in").onclick = ()=>{
-
-
-zoom +=0.1;
-
-
-
-if(zoom>2.5){
-
-
-zoom=2.5;
-
-
-}
-
-
-
-updateCamera();
-
-
-
-};
-
-
-
-
-
-
-
-
-
-document.getElementById("zoom-reset").onclick = ()=>{
-
-
-zoom=1;
-
-
-moveX=0;
-
-
-moveY=0;
-
-
-
-updateCamera();
-
-
-
-};
-
-
-
-
-
-
-
-
-
-camera.addEventListener("mousedown",(e)=>{
-
-
-
-if(zoom<=1){
-
-
-return;
-
-
-}
-
-
-
-dragging=true;
-
-
-camera.classList.add("dragging");
-
-
-
-startX=e.clientX;
-
-
-startY=e.clientY;
-
-
-
-});
-
-
-
-
-
-
-
-
-
-document.addEventListener("mousemove",(e)=>{
-
-
-if(!dragging){
-
-
-return;
-
-
-}
-
-
-
-
-
-moveX += e.clientX-startX;
-
-
-moveY += e.clientY-startY;
-
-
-
-startX=e.clientX;
-
-
-startY=e.clientY;
-
-
-
-
-updateCamera();
-
-
-
-});
-
-
-
-
-
-
-
-
-
-document.addEventListener("mouseup",()=>{
-
-
-
-dragging=false;
-
-
-
-camera.classList.remove("dragging");
-
-
-
-});
-
-
-
-
-}
-
-
-
-loadMagazine();
+});    
