@@ -87,12 +87,15 @@ console.log(pageFlip.getPageCount());
 
 
     const container = document.querySelector(".viewer");
-    if (!container) return;
+if (!container) return;
 
-    function updateTransform() {
+const camera = document.querySelector(".camera");
+if (!camera) return;
 
-    book.style.transform =
-    `translate(${moveX}px, ${moveY}px) scale(${baseScale * zoom})`;
+function updateTransform() {
+
+    camera.style.transform =
+        `translate(${moveX}px, ${moveY}px) scale(${baseScale * zoom})`;
 
     if (zoomValue) {
 
@@ -101,22 +104,39 @@ console.log(pageFlip.getPageCount());
     }
 
 }
+container.addEventListener("mousedown", (e) => {
 
-    container.addEventListener("wheel", (e) => {
+    if (zoom <= 1) return;
 
-        if (!e.ctrlKey) return;
+    dragging = true;
 
-        e.preventDefault();
+    startX = e.clientX - moveX;
+    startY = e.clientY - moveY;
 
-        const delta = e.deltaY < 0 ? 0.1 : -0.1;
+    container.style.cursor = "grabbing";
 
-        zoom += delta;
+});
 
-        zoom = Math.min(Math.max(zoom, 1), 3);
+container.addEventListener("mousemove", (e) => {
 
-        updateTransform();
+    if (!dragging) return;
 
-    });
+    moveX = e.clientX - startX;
+    moveY = e.clientY - startY;
+
+    updateTransform();
+
+});
+
+window.addEventListener("mouseup", () => {
+
+    dragging = false;
+
+    container.style.cursor = "grab";
+
+});
+
+
     if (zoomIn) {
 
     zoomIn.onclick = () => {
@@ -155,7 +175,7 @@ if (zoomReset) {
 
 }
 
-    container.addEventListener("wheel", (e) => {
+container.addEventListener("wheel", (e) => {
 
     e.preventDefault();
 
