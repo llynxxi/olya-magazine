@@ -155,29 +155,19 @@ if (zoomReset) {
 
 }
 
-    container.addEventListener("mousedown", (e) => {
+    container.addEventListener("wheel", (e) => {
 
-        if (zoom <= 1) return;
+    e.preventDefault();
 
-        dragging = true;
+    const delta = e.deltaY < 0 ? 0.08 : -0.08;
 
-        startX = e.clientX - moveX;
-        startY = e.clientY - moveY;
+    zoom += delta;
 
-        container.style.cursor = "grabbing";
+    zoom = Math.min(Math.max(zoom, 1), 3);
 
-    });
+    updateTransform();
 
-    window.addEventListener("mousemove", (e) => {
-
-        if (!dragging) return;
-
-        moveX = e.clientX - startX;
-        moveY = e.clientY - startY;
-
-        updateTransform();
-
-    });
+}, { passive: false });
 
     window.addEventListener("mouseup", () => {
 
