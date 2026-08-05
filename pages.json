@@ -26,5 +26,9 @@
   {
     "image": "images/Eminem-3.jpg",
     "title": "Eminem"
+  },
+  {
+    "title": "Jiddu Krishnamurti",
+    "image": "images/krishnamurti.jpg"
   }
 ]
