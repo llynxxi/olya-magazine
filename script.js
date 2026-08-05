@@ -75,7 +75,7 @@ async function loadMagazine() {
         flippingTime: 450,
 
         mobileScrollSupport: false,
-        useMouseEvents: false
+        useMouseEvents: true
 
     });
     pageFlip.loadFromHTML(
@@ -89,7 +89,7 @@ console.log(pageFlip.getPageCount());
     const container = document.querySelector(".viewer");
 if (!container) return;
 
-const camera = document.querySelector(".camera");
+const camera = document.getElementById("book");
 if (!camera) return;
 
 function updateTransform() {
@@ -141,7 +141,7 @@ window.addEventListener("mouseup", () => {
 
     zoomIn.onclick = () => {
 
-        zoom = Math.min(zoom + 0.1, 3);
+        zoom = Math.min(zoom + 0.1, 4.5);
 
         updateTransform();
 
@@ -197,6 +197,7 @@ container.addEventListener("wheel", (e) => {
 
     });
         const nextButton = document.getElementById("next");
+        console.log(pageFlip);
     const prevButton = document.getElementById("prev");
     const bottomNext = document.getElementById("bottom-next");
 const bottomPrev = document.getElementById("bottom-prev");
