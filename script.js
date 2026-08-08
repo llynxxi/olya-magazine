@@ -75,7 +75,7 @@ async function loadMagazine() {
         flippingTime: 450,
 
         mobileScrollSupport: false,
-        useMouseEvents: true
+        useMouseEvents: false
 
     });
     pageFlip.loadFromHTML(

@@ -290,26 +290,29 @@ body::before{
 /* ================= BOOK ================= */
 
 
+
 #book{
 
     width:1080px;
 
     height:720px;
 
+    transform:scale(.72);
+
+    transform-origin:center center;
+
     position:relative;
 
-
     filter:
-drop-shadow(0 10px 20px rgba(0,0,0,.25))
-drop-shadow(0 35px 55px rgba(0,0,0,.45));
+    drop-shadow(0 10px 20px rgba(0,0,0,.25))
+    drop-shadow(0 35px 55px rgba(0,0,0,.45));
 
-    cursor:grab;
+    cursor:default;
 
     user-select:none;
-    will-change:transform;
-backface-visibility:hidden;
 
 }
+
 
 
 
@@ -343,6 +346,8 @@ backface-visibility:hidden;
     height:100%;
 
     object-fit:fill;
+
+    image-rendering:auto;
 
 }
 .page::before{
