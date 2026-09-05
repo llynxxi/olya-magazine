@@ -1,6 +1,6 @@
 [
   {
-    "image": "images/cover-2.jpg",
+    "image": "images/cover-3.jpg",
     "title": "Cover"
   },
   {
@@ -42,5 +42,9 @@
   {
     "image": "images/Timothee-1.jpg",
     "title": "Timothee Chalamet"
+  },
+  {
+    "image": "images/coverback.jpg",
+    "title": "Coverback"
   }
 ]
