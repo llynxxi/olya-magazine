@@ -628,3 +628,128 @@ body::before{
     transform:scale(1.08);
 
 }
+/* ================= MOBILE VERSION ================= */
+
+@media (max-width: 768px){
+
+    body{
+        background-image:url("images/table.jpg");
+        background-size:cover;
+        background-position:center;
+    }
+
+    .viewer{
+        width:100vw;
+        height:100vh;
+        overflow:hidden;
+    }
+
+    #book{
+        width:1080px;
+        height:720px;
+        transform:scale(.45);
+        transform-origin:center center;
+    }
+
+    /* MENU BUTTON */
+
+    .menu-btn{
+        top:15px;
+        left:15px;
+
+        width:48px;
+        height:48px;
+
+        font-size:25px;
+    }
+
+    /* ZOOM */
+
+    .zoom-panel{
+        right:15px;
+        top:15px;
+
+        height:48px;
+        padding:0 12px;
+
+        gap:8px;
+    }
+
+    .zoom-panel button{
+        width:32px;
+        height:32px;
+        font-size:18px;
+    }
+
+    /* BOTTOM NAVIGATION */
+
+    .bottom-bar{
+        bottom:15px;
+
+        gap:18px;
+
+        padding:8px 18px;
+    }
+
+    .bottom-arrow{
+        font-size:24px;
+    }
+
+    .bottom-bar .counter{
+        font-size:14px;
+    }
+
+    /* MENU */
+
+    .menu{
+        width:85vw;
+        max-width:360px;
+
+        left:-100vw;
+
+        padding:90px 25px 25px 25px;
+    }
+
+    .menu.active{
+        left:0;
+    }
+
+    .menu h1{
+        font-size:28px;
+    }
+
+    .subtitle{
+        font-size:15px;
+        margin-top:18px;
+    }
+
+    .menu-line{
+        margin:25px 0;
+    }
+
+    #menu-pages{
+        height:auto;
+        max-height:55vh;
+    }
+
+    #menu-pages p{
+        font-size:17px;
+        margin:12px 0;
+    }
+
+    .close-menu{
+        top:18px;
+        right:18px;
+    }
+
+    /* PREVENT TEXT SELECTION WHILE SWIPING */
+
+    #book,
+    .page,
+    .page img{
+        -webkit-user-select:none;
+        user-select:none;
+        -webkit-touch-callout:none;
+    }
+
+}

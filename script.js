@@ -1,17 +1,24 @@
 let pageFlip = null;
 
 const baseScale = 0.72;
+
 let zoom = 1;
 let moveX = 0;
 let moveY = 0;
 
 let dragging = false;
+
+let startX = 0;
+let startY = 0;
+
+let touchStartX = 0;
+let touchStartY = 0;
+
 const zoomValue = document.getElementById("zoom-value");
 const zoomIn = document.getElementById("zoom-in");
 const zoomOut = document.getElementById("zoom-out");
 const zoomReset = document.getElementById("zoom-reset");
-let startX = 0;
-let startY = 0;
+
 
 async function loadMagazine() {
 
@@ -25,12 +32,20 @@ async function loadMagazine() {
     const menuPrev = document.getElementById("menu-prev");
     const menuNext = document.getElementById("menu-next");
 
+    const container = document.querySelector(".viewer");
+
+    if (!book || !container) return;
+
     book.innerHTML = "";
     menuPages.innerHTML = "";
+
+
+    /* ================= CREATE PAGES ================= */
 
     pages.forEach((item, index) => {
 
         const page = document.createElement("div");
+
         page.className = "page";
 
         page.innerHTML = `
@@ -39,12 +54,14 @@ async function loadMagazine() {
 
         book.appendChild(page);
 
+
         const menuItem = document.createElement("p");
 
         menuItem.textContent =
             `${String(index + 1).padStart(2, "0")} — ${item.title}`;
 
         menuItem.style.cursor = "pointer";
+
 
         menuItem.addEventListener("click", () => {
 
@@ -54,9 +71,13 @@ async function loadMagazine() {
 
         });
 
+
         menuPages.appendChild(menuItem);
 
     });
+
+
+    /* ================= PAGE FLIP ================= */
 
     pageFlip = new St.PageFlip(book, {
 
@@ -78,116 +99,66 @@ async function loadMagazine() {
         useMouseEvents: false
 
     });
+
+
     pageFlip.loadFromHTML(
-
-    document.querySelectorAll(".page")
-
-);
-console.log(pageFlip.getPageCount());
+        document.querySelectorAll(".page")
+    );
 
 
-    const container = document.querySelector(".viewer");
-if (!container) return;
+    console.log(pageFlip.getPageCount());
 
-const camera = document.getElementById("book");
-if (!camera) return;
 
-function updateTransform() {
+    /* ================= CAMERA ================= */
 
-    camera.style.transform =
-        `translate(${moveX}px, ${moveY}px) scale(${baseScale * zoom})`;
+    const camera = document.getElementById("book");
 
-    if (zoomValue) {
+    if (!camera) return;
 
-        zoomValue.textContent = `${Math.round(zoom * 100)}%`;
+
+    function updateTransform() {
+
+        camera.style.transform =
+            `translate(${moveX}px, ${moveY}px) scale(${baseScale * zoom})`;
+
+
+        if (zoomValue) {
+
+            zoomValue.textContent =
+                `${Math.round(zoom * 100)}%`;
+
+        }
 
     }
 
-}
-container.addEventListener("mousedown", (e) => {
 
-    if (zoom <= 1) return;
+    /* ================= MOUSE DRAG ================= */
 
-    dragging = true;
+    container.addEventListener("mousedown", (e) => {
 
-    startX = e.clientX - moveX;
-    startY = e.clientY - moveY;
+        if (zoom <= 1) return;
 
-    container.style.cursor = "grabbing";
+        dragging = true;
 
-});
+        startX = e.clientX - moveX;
+        startY = e.clientY - moveY;
 
-container.addEventListener("mousemove", (e) => {
+        container.style.cursor = "grabbing";
 
-    if (!dragging) return;
-
-    moveX = e.clientX - startX;
-    moveY = e.clientY - startY;
-
-    updateTransform();
-
-});
-
-window.addEventListener("mouseup", () => {
-
-    dragging = false;
-
-    container.style.cursor = "grab";
-
-});
+    });
 
 
-    if (zoomIn) {
+    container.addEventListener("mousemove", (e) => {
 
-    zoomIn.onclick = () => {
+        if (!dragging) return;
 
-        zoom = Math.min(zoom + 0.1, 4.5);
+        moveX = e.clientX - startX;
+        moveY = e.clientY - startY;
 
         updateTransform();
 
-    };
+    });
 
-}
-
-if (zoomOut) {
-
-    zoomOut.onclick = () => {
-
-        zoom = Math.max(zoom - 0.1, 0.5);
-
-        updateTransform();
-
-    };
-
-}
-
-if (zoomReset) {
-
-    zoomReset.onclick = () => {
-
-        zoom = 1;
-        moveX = 0;
-        moveY = 0;
-
-        updateTransform();
-
-    };
-
-}
-
-container.addEventListener("wheel", (e) => {
-
-    e.preventDefault();
-
-    const delta = e.deltaY < 0 ? 0.08 : -0.08;
-
-    zoom += delta;
-
-    zoom = Math.min(Math.max(zoom, 1), 4.5);
-
-    updateTransform();
-
-}, { passive: false });
 
     window.addEventListener("mouseup", () => {
 
@@ -196,11 +167,153 @@ container.addEventListener("wheel", (e) => {
         container.style.cursor = "grab";
 
     });
-        const nextButton = document.getElementById("next");
-        console.log(pageFlip);
-    const prevButton = document.getElementById("prev");
-    const bottomNext = document.getElementById("bottom-next");
-const bottomPrev = document.getElementById("bottom-prev");
+
+
+    /* ================= MOBILE SWIPE ================= */
+
+    container.addEventListener("touchstart", (e) => {
+
+        if (e.touches.length !== 1) return;
+
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+
+    }, { passive: true });
+
+
+    container.addEventListener("touchend", (e) => {
+
+        if (e.changedTouches.length !== 1) return;
+
+        const touchEndX =
+            e.changedTouches[0].clientX;
+
+        const touchEndY =
+            e.changedTouches[0].clientY;
+
+
+        const differenceX =
+            touchEndX - touchStartX;
+
+        const differenceY =
+            touchEndY - touchStartY;
+
+
+        /* Слишком маленькое движение */
+
+        if (Math.abs(differenceX) < 50) return;
+
+
+        /* Если движение больше вертикальное,
+           чем горизонтальное — ничего не делаем */
+
+        if (Math.abs(differenceY) > Math.abs(differenceX)) return;
+
+
+        /* Свайп влево → следующая страница */
+
+        if (differenceX < 0) {
+
+            pageFlip.flipNext();
+
+        }
+
+
+        /* Свайп вправо → предыдущая страница */
+
+        else {
+
+            pageFlip.flipPrev();
+
+        }
+
+    }, { passive: true });
+
+
+    /* ================= ZOOM IN ================= */
+
+    if (zoomIn) {
+
+        zoomIn.onclick = () => {
+
+            zoom = Math.min(zoom + 0.1, 4.5);
+
+            updateTransform();
+
+        };
+
+    }
+
+
+    /* ================= ZOOM OUT ================= */
+
+    if (zoomOut) {
+
+        zoomOut.onclick = () => {
+
+            zoom = Math.max(zoom - 0.1, 0.5);
+
+            updateTransform();
+
+        };
+
+    }
+
+
+    /* ================= ZOOM RESET ================= */
+
+    if (zoomReset) {
+
+        zoomReset.onclick = () => {
+
+            zoom = 1;
+
+            moveX = 0;
+            moveY = 0;
+
+            updateTransform();
+
+        };
+
+    }
+
+
+    /* ================= MOUSE WHEEL ZOOM ================= */
+
+    container.addEventListener("wheel", (e) => {
+
+        e.preventDefault();
+
+        const delta =
+            e.deltaY < 0 ? 0.08 : -0.08;
+
+        zoom += delta;
+
+        zoom =
+            Math.min(
+                Math.max(zoom, 1),
+                4.5
+            );
+
+        updateTransform();
+
+    }, { passive: false });
+
+
+    /* ================= NEXT / PREVIOUS ================= */
+
+    const nextButton =
+        document.getElementById("next");
+
+    const prevButton =
+        document.getElementById("prev");
+
+    const bottomNext =
+        document.getElementById("bottom-next");
+
+    const bottomPrev =
+        document.getElementById("bottom-prev");
+
 
     if (nextButton) {
 
@@ -211,15 +324,18 @@ const bottomPrev = document.getElementById("bottom-prev");
         };
 
     }
+
+
     if (bottomNext) {
 
-    bottomNext.onclick = () => {
+        bottomNext.onclick = () => {
 
-        pageFlip.flipNext();
+            pageFlip.flipNext();
 
-    };
+        };
 
-}
+    }
+
 
     if (prevButton) {
 
@@ -230,40 +346,55 @@ const bottomPrev = document.getElementById("bottom-prev");
         };
 
     }
+
+
     if (bottomPrev) {
 
-    bottomPrev.onclick = () => {
+        bottomPrev.onclick = () => {
 
-        pageFlip.flipPrev();
+            pageFlip.flipPrev();
 
-    };
+        };
 
-}
+    }
+
+
+    /* ================= MENU NAVIGATION ================= */
 
     if (menuNext) {
 
         menuNext.onclick = () => {
 
             pageFlip.flipNext();
+
             menu.classList.remove("active");
 
         };
 
     }
+
 
     if (menuPrev) {
 
         menuPrev.onclick = () => {
 
             pageFlip.flipPrev();
+
             menu.classList.remove("active");
 
         };
 
     }
 
-    const menuButton = document.getElementById("menu-button");
-    const closeMenu = document.getElementById("close-menu");
+
+    /* ================= MENU ================= */
+
+    const menuButton =
+        document.getElementById("menu-button");
+
+    const closeMenu =
+        document.getElementById("close-menu");
+
 
     if (menuButton) {
 
@@ -275,6 +406,7 @@ const bottomPrev = document.getElementById("bottom-prev");
 
     }
 
+
     if (closeMenu) {
 
         closeMenu.onclick = () => {
@@ -285,6 +417,9 @@ const bottomPrev = document.getElementById("bottom-prev");
 
     }
 
+
+    /* ================= KEYBOARD ================= */
+
     document.addEventListener("keydown", (e) => {
 
         if (e.key === "ArrowRight") {
@@ -293,11 +428,13 @@ const bottomPrev = document.getElementById("bottom-prev");
 
         }
 
+
         if (e.key === "ArrowLeft") {
 
             pageFlip.flipPrev();
 
         }
+
 
         if (e.key === "Escape") {
 
@@ -306,10 +443,17 @@ const bottomPrev = document.getElementById("bottom-prev");
         }
 
     });
-    }
+
+
+    /* ================= INITIAL TRANSFORM ================= */
+
+    updateTransform();
+
+}
+
 
 loadMagazine().catch((error) => {
 
     console.error(error);
 
-});    
+});
