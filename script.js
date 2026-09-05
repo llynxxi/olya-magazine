@@ -183,7 +183,7 @@ container.addEventListener("wheel", (e) => {
 
     zoom += delta;
 
-    zoom = Math.min(Math.max(zoom, 1), 3);
+    zoom = Math.min(Math.max(zoom, 1), 4.5);
 
     updateTransform();
 
