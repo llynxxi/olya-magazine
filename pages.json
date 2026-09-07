@@ -44,11 +44,11 @@
     "title": "Timothee Chalamet"
   },
   {
-    "image": "images/coverback.jpg",
-    "title": "Coverback"
-  },
-  {
     "image": "images/ariana.jpg",
     "title": "Ariana Grande"
+  },
+  {
+    "image": "images/coverback.jpg",
+    "title": "Coverback"
   }
 ]
