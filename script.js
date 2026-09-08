@@ -14,10 +14,31 @@ let startY = 0;
 let touchStartX = 0;
 let touchStartY = 0;
 
+let activeText = null;
+
+let currentTextSize =
+    Number(localStorage.getItem("magazine-text-size")) || 18;
+
+let currentTextColor =
+    localStorage.getItem("magazine-text-color") || "#111111";
+
+
 const zoomValue = document.getElementById("zoom-value");
 const zoomIn = document.getElementById("zoom-in");
 const zoomOut = document.getElementById("zoom-out");
 const zoomReset = document.getElementById("zoom-reset");
+
+const textSmaller =
+    document.getElementById("text-smaller");
+
+const textLarger =
+    document.getElementById("text-larger");
+
+const textSize =
+    document.getElementById("text-size");
+
+const textColor =
+    document.getElementById("text-color");
 
 
 async function loadMagazine() {
@@ -25,14 +46,23 @@ async function loadMagazine() {
     const response = await fetch("pages.json");
     const pages = await response.json();
 
-    const book = document.getElementById("book");
-    const menuPages = document.getElementById("menu-pages");
+    const book =
+        document.getElementById("book");
 
-    const menu = document.querySelector(".menu");
-    const menuPrev = document.getElementById("menu-prev");
-    const menuNext = document.getElementById("menu-next");
+    const menuPages =
+        document.getElementById("menu-pages");
 
-    const container = document.querySelector(".viewer");
+    const menu =
+        document.querySelector(".menu");
+
+    const menuPrev =
+        document.getElementById("menu-prev");
+
+    const menuNext =
+        document.getElementById("menu-next");
+
+    const container =
+        document.querySelector(".viewer");
 
     if (!book || !container) return;
 
@@ -40,31 +70,168 @@ async function loadMagazine() {
     menuPages.innerHTML = "";
 
 
-    /* ================= REGULAR PAGES ================= */
+    /* =====================================================
+       TEXT STORAGE
+    ===================================================== */
 
-    const regularPages = pages.slice(0, -1);
-    const coverBack = pages[pages.length - 1];
+    const savedTexts =
+        JSON.parse(
+            localStorage.getItem("magazine-texts") || "{}"
+        );
+
+
+    /* =====================================================
+       REGULAR PAGES
+    ===================================================== */
+
+    const regularPages =
+        pages.slice(0, -1);
+
+    const coverBack =
+        pages[pages.length - 1];
 
 
     regularPages.forEach((item, index) => {
 
-        const page = document.createElement("div");
+        const page =
+            document.createElement("div");
 
-        page.className = "page";
+        page.className =
+            "page";
 
         page.innerHTML = `
-            <img src="${item.image}" alt="${item.title}">
+            <img
+                src="${item.image}"
+                alt="${item.title}"
+            >
         `;
 
         book.appendChild(page);
 
 
-        const menuItem = document.createElement("p");
+        /*
+         * Используем имя картинки как ключ.
+         * Поэтому если позже добавятся новые страницы,
+         * уже написанный текст не будет переезжать.
+         */
+
+        const pageKey =
+            `page-${item.image}`;
+
+
+        /* =================================================
+           RESTORE SAVED TEXT
+        ================================================= */
+
+        if (savedTexts[pageKey]) {
+
+            savedTexts[pageKey].forEach(item => {
+
+                createTextElement(
+                    page,
+                    pageKey,
+                    item.text,
+                    item.left,
+                    item.top,
+                    item.fontSize || currentTextSize,
+                    item.color || currentTextColor
+                );
+
+            });
+
+        }
+
+
+        /* =================================================
+           ONE CLICK = NEW TEXT
+        ================================================= */
+
+        page.addEventListener("click", (e) => {
+
+            /*
+             * Если кликнули по уже существующему тексту —
+             * новый текст не создаём.
+             */
+
+            if (
+                e.target.closest(".magazine-text")
+            ) {
+                activeText =
+                    e.target.closest(".magazine-text");
+
+                updateTextPanel();
+
+                return;
+            }
+
+
+            /*
+             * Если кликнули по Contents —
+             * текст не создаём.
+             */
+
+            if (
+                e.target.closest(".contents-item")
+            ) {
+                return;
+            }
+
+
+            const rect =
+                page.getBoundingClientRect();
+
+
+            /*
+             * Считаем положение относительно
+             * реального размера страницы.
+             *
+             * Благодаря этому текст появляется
+             * именно там, куда нажали,
+             * даже при увеличении.
+             */
+
+            const x =
+                ((e.clientX - rect.left) /
+                    rect.width) * 100;
+
+            const y =
+                ((e.clientY - rect.top) /
+                    rect.height) * 100;
+
+
+            const text =
+                createTextElement(
+                    page,
+                    pageKey,
+                    "",
+                    `${x}%`,
+                    `${y}%`,
+                    currentTextSize,
+                    currentTextColor
+                );
+
+
+            activeText = text;
+
+            updateTextPanel();
+
+            text.focus();
+
+        });
+
+
+        /* =================================================
+           MENU PAGE
+        ================================================= */
+
+        const menuItem =
+            document.createElement("p");
 
         menuItem.textContent =
             `${String(index + 1).padStart(2, "0")} — ${item.title}`;
 
-        menuItem.style.cursor = "pointer";
+        menuItem.style.cursor =
+            "pointer";
 
         menuItem.addEventListener("click", () => {
 
@@ -79,7 +246,9 @@ async function loadMagazine() {
     });
 
 
-    /* ================= CONTENTS ================= */
+    /* =====================================================
+       CONTENTS
+    ===================================================== */
 
     if (regularPages.length % 2 === 0) {
 
@@ -113,6 +282,7 @@ async function loadMagazine() {
         regularPages.forEach((item, index) => {
 
             if (index === 0) return;
+
 
             const number =
                 String(index + 1).padStart(2, "0");
@@ -164,7 +334,9 @@ async function loadMagazine() {
         book.appendChild(contentsPage);
 
 
-        /* ================= CONTENTS MENU ================= */
+        /* =================================================
+           CONTENTS IN MENU
+        ================================================= */
 
         const contentsMenuItem =
             document.createElement("p");
@@ -172,7 +344,8 @@ async function loadMagazine() {
         contentsMenuItem.textContent =
             `${String(regularPages.length + 1).padStart(2, "0")} — Contents`;
 
-        contentsMenuItem.style.cursor = "pointer";
+        contentsMenuItem.style.cursor =
+            "pointer";
 
         contentsMenuItem.addEventListener("click", () => {
 
@@ -184,10 +357,14 @@ async function loadMagazine() {
 
         });
 
-        menuPages.appendChild(contentsMenuItem);
+        menuPages.appendChild(
+            contentsMenuItem
+        );
 
 
-        /* ================= CONTENTS CLICK ================= */
+        /* =================================================
+           CONTENTS CLICK
+        ================================================= */
 
         contentsPage
             .querySelectorAll(".contents-item")
@@ -196,9 +373,13 @@ async function loadMagazine() {
                 item.addEventListener("click", () => {
 
                     const targetPage =
-                        Number(item.dataset.page);
+                        Number(
+                            item.dataset.page
+                        );
 
-                    pageFlip.turnToPage(targetPage);
+                    pageFlip.turnToPage(
+                        targetPage
+                    );
 
                 });
 
@@ -207,12 +388,15 @@ async function loadMagazine() {
     }
 
 
-    /* ================= BACK COVER ================= */
+    /* =====================================================
+       BACK COVER
+    ===================================================== */
 
     const backPage =
         document.createElement("div");
 
-    backPage.className = "page";
+    backPage.className =
+        "page";
 
     backPage.innerHTML = `
         <img
@@ -224,7 +408,9 @@ async function loadMagazine() {
     book.appendChild(backPage);
 
 
-    /* ================= BACK COVER MENU ================= */
+    /* =====================================================
+       BACK COVER MENU
+    ===================================================== */
 
     const backMenuItem =
         document.createElement("p");
@@ -232,46 +418,58 @@ async function loadMagazine() {
     backMenuItem.textContent =
         `${String(pages.length).padStart(2, "0")} — ${coverBack.title}`;
 
-    backMenuItem.style.cursor = "pointer";
+    backMenuItem.style.cursor =
+        "pointer";
 
     backMenuItem.addEventListener("click", () => {
 
         const backCoverIndex =
             book.querySelectorAll(".page").length - 1;
 
-        pageFlip.turnToPage(backCoverIndex);
+        pageFlip.turnToPage(
+            backCoverIndex
+        );
 
         menu.classList.remove("active");
 
     });
 
-    menuPages.appendChild(backMenuItem);
+    menuPages.appendChild(
+        backMenuItem
+    );
 
 
-    /* ================= PAGE FLIP ================= */
+    /* =====================================================
+       PAGE FLIP
+    ===================================================== */
 
-    pageFlip = new St.PageFlip(book, {
+    pageFlip =
+        new St.PageFlip(
+            book,
+            {
 
-        width: 540,
-        height: 720,
+                width: 540,
 
-        size: "fixed",
+                height: 720,
 
-        showCover: true,
+                size: "fixed",
 
-        usePortrait: false,
+                showCover: true,
 
-        drawShadow: false,
+                usePortrait: false,
 
-        maxShadowOpacity: 0,
+                drawShadow: false,
 
-        flippingTime: 450,
+                maxShadowOpacity: 0,
 
-        mobileScrollSupport: false,
+                flippingTime: 450,
 
-        useMouseEvents: false
+                mobileScrollSupport: false,
 
-    });
+                useMouseEvents: false
+
+            }
+        );
 
 
     pageFlip.loadFromHTML(
@@ -285,7 +483,9 @@ async function loadMagazine() {
     );
 
 
-    /* ================= CAMERA ================= */
+    /* =====================================================
+       CAMERA
+    ===================================================== */
 
     const camera =
         document.getElementById("book");
@@ -298,6 +498,7 @@ async function loadMagazine() {
         camera.style.transform =
             `translate(${moveX}px, ${moveY}px) scale(${baseScale * zoom})`;
 
+
         if (zoomValue) {
 
             zoomValue.textContent =
@@ -308,105 +509,167 @@ async function loadMagazine() {
     }
 
 
-    /* ================= MOUSE DRAG ================= */
+    /* =====================================================
+       MOUSE DRAG
+    ===================================================== */
 
-    container.addEventListener("mousedown", (e) => {
+    container.addEventListener(
+        "mousedown",
+        (e) => {
 
-        if (zoom <= 1) return;
+            /*
+             * Не начинаем перемещение,
+             * если нажали на текстовую панель.
+             */
 
-        dragging = true;
-
-        startX =
-            e.clientX - moveX;
-
-        startY =
-            e.clientY - moveY;
-
-        container.style.cursor =
-            "grabbing";
-
-    });
-
-
-    container.addEventListener("mousemove", (e) => {
-
-        if (!dragging) return;
-
-        moveX =
-            e.clientX - startX;
-
-        moveY =
-            e.clientY - startY;
-
-        updateTransform();
-
-    });
+            if (
+                e.target.closest(".text-panel")
+            ) {
+                return;
+            }
 
 
-    window.addEventListener("mouseup", () => {
+            /*
+             * Не начинаем перемещение,
+             * если печатаем текст.
+             */
 
-        dragging = false;
-
-        container.style.cursor =
-            "grab";
-
-    });
-
-
-    /* ================= MOBILE SWIPE ================= */
-
-    container.addEventListener("touchstart", (e) => {
-
-        if (e.touches.length !== 1) return;
-
-        touchStartX =
-            e.touches[0].clientX;
-
-        touchStartY =
-            e.touches[0].clientY;
-
-    }, { passive: true });
+            if (
+                e.target.closest(".magazine-text")
+            ) {
+                return;
+            }
 
 
-    container.addEventListener("touchend", (e) => {
-
-        if (e.changedTouches.length !== 1) return;
-
-        const touchEndX =
-            e.changedTouches[0].clientX;
-
-        const touchEndY =
-            e.changedTouches[0].clientY;
-
-        const differenceX =
-            touchEndX - touchStartX;
-
-        const differenceY =
-            touchEndY - touchStartY;
+            if (zoom <= 1) return;
 
 
-        if (Math.abs(differenceX) < 50) return;
-
-        if (
-            Math.abs(differenceY) >
-            Math.abs(differenceX)
-        ) return;
+            dragging = true;
 
 
-        if (differenceX < 0) {
+            startX =
+                e.clientX - moveX;
 
-            pageFlip.flipNext();
+            startY =
+                e.clientY - moveY;
 
-        } else {
 
-            pageFlip.flipPrev();
+            container.style.cursor =
+                "grabbing";
 
         }
+    );
 
-    }, { passive: true });
+
+    container.addEventListener(
+        "mousemove",
+        (e) => {
+
+            if (!dragging) return;
 
 
-    /* ================= ZOOM IN ================= */
+            moveX =
+                e.clientX - startX;
+
+            moveY =
+                e.clientY - startY;
+
+
+            updateTransform();
+
+        }
+    );
+
+
+    window.addEventListener(
+        "mouseup",
+        () => {
+
+            dragging = false;
+
+            container.style.cursor =
+                "grab";
+
+        }
+    );
+
+
+    /* =====================================================
+       MOBILE SWIPE
+    ===================================================== */
+
+    container.addEventListener(
+        "touchstart",
+        (e) => {
+
+            if (
+                e.touches.length !== 1
+            ) return;
+
+
+            touchStartX =
+                e.touches[0].clientX;
+
+            touchStartY =
+                e.touches[0].clientY;
+
+        },
+        { passive: true }
+    );
+
+
+    container.addEventListener(
+        "touchend",
+        (e) => {
+
+            if (
+                e.changedTouches.length !== 1
+            ) return;
+
+
+            const touchEndX =
+                e.changedTouches[0].clientX;
+
+            const touchEndY =
+                e.changedTouches[0].clientY;
+
+
+            const differenceX =
+                touchEndX - touchStartX;
+
+            const differenceY =
+                touchEndY - touchStartY;
+
+
+            if (
+                Math.abs(differenceX) < 50
+            ) return;
+
+
+            if (
+                Math.abs(differenceY) >
+                Math.abs(differenceX)
+            ) return;
+
+
+            if (differenceX < 0) {
+
+                pageFlip.flipNext();
+
+            } else {
+
+                pageFlip.flipPrev();
+
+            }
+
+        },
+        { passive: true }
+    );
+
+
+    /* =====================================================
+       ZOOM IN
+    ===================================================== */
 
     if (zoomIn) {
 
@@ -425,7 +688,9 @@ async function loadMagazine() {
     }
 
 
-    /* ================= ZOOM OUT ================= */
+    /* =====================================================
+       ZOOM OUT
+    ===================================================== */
 
     if (zoomOut) {
 
@@ -444,7 +709,9 @@ async function loadMagazine() {
     }
 
 
-    /* ================= ZOOM RESET ================= */
+    /* =====================================================
+       ZOOM RESET
+    ===================================================== */
 
     if (zoomReset) {
 
@@ -462,31 +729,174 @@ async function loadMagazine() {
     }
 
 
-    /* ================= WHEEL ZOOM ================= */
+    /* =====================================================
+       WHEEL ZOOM
+    ===================================================== */
 
-    container.addEventListener("wheel", (e) => {
+    container.addEventListener(
+        "wheel",
+        (e) => {
 
-        e.preventDefault();
+            /*
+             * Если крутим колесо над текстом,
+             * всё равно работает zoom.
+             */
 
-        const delta =
-            e.deltaY < 0
-                ? 0.08
-                : -0.08;
+            e.preventDefault();
 
-        zoom += delta;
 
-        zoom =
-            Math.min(
-                Math.max(zoom, 1),
-                4.5
+            const delta =
+                e.deltaY < 0
+                    ? 0.08
+                    : -0.08;
+
+
+            zoom += delta;
+
+
+            zoom =
+                Math.min(
+                    Math.max(zoom, 1),
+                    4.5
+                );
+
+
+            updateTransform();
+
+        },
+        { passive: false }
+    );
+
+
+    /* =====================================================
+       TEXT PANEL
+    ===================================================== */
+
+    if (textSmaller) {
+
+        textSmaller.onclick = () => {
+
+            if (!activeText) return;
+
+
+            let size =
+                parseFloat(
+                    getComputedStyle(
+                        activeText
+                    ).fontSize
+                );
+
+
+            size =
+                Math.max(
+                    size - 2,
+                    8
+                );
+
+
+            activeText.style.fontSize =
+                `${size}px`;
+
+
+            currentTextSize =
+                size;
+
+
+            localStorage.setItem(
+                "magazine-text-size",
+                currentTextSize
             );
 
-        updateTransform();
 
-    }, { passive: false });
+            saveAllTexts();
+
+            updateTextPanel();
+
+        };
+
+    }
 
 
-    /* ================= NEXT / PREVIOUS ================= */
+    if (textLarger) {
+
+        textLarger.onclick = () => {
+
+            if (!activeText) return;
+
+
+            let size =
+                parseFloat(
+                    getComputedStyle(
+                        activeText
+                    ).fontSize
+                );
+
+
+            size =
+                Math.min(
+                    size + 2,
+                    72
+                );
+
+
+            activeText.style.fontSize =
+                `${size}px`;
+
+
+            currentTextSize =
+                size;
+
+
+            localStorage.setItem(
+                "magazine-text-size",
+                currentTextSize
+            );
+
+
+            saveAllTexts();
+
+            updateTextPanel();
+
+        };
+
+    }
+
+
+    if (textColor) {
+
+        textColor.value =
+            currentTextColor;
+
+
+        textColor.oninput = () => {
+
+            if (!activeText) return;
+
+
+            activeText.style.color =
+                textColor.value;
+
+
+            currentTextColor =
+                textColor.value;
+
+
+            localStorage.setItem(
+                "magazine-text-color",
+                currentTextColor
+            );
+
+
+            saveAllTexts();
+
+        };
+
+    }
+
+
+    /* =====================================================
+       PREVIOUS / NEXT
+    ===================================================== */
 
     const nextButton =
         document.getElementById("next");
@@ -545,7 +955,9 @@ async function loadMagazine() {
     }
 
 
-    /* ================= MENU NAVIGATION ================= */
+    /* =====================================================
+       MENU NAVIGATION
+    ===================================================== */
 
     if (menuNext) {
 
@@ -553,7 +965,9 @@ async function loadMagazine() {
 
             pageFlip.flipNext();
 
-            menu.classList.remove("active");
+            menu.classList.remove(
+                "active"
+            );
 
         };
 
@@ -566,14 +980,18 @@ async function loadMagazine() {
 
             pageFlip.flipPrev();
 
-            menu.classList.remove("active");
+            menu.classList.remove(
+                "active"
+            );
 
         };
 
     }
 
 
-    /* ================= MENU ================= */
+    /* =====================================================
+       MENU
+    ===================================================== */
 
     const menuButton =
         document.getElementById("menu-button");
@@ -586,7 +1004,9 @@ async function loadMagazine() {
 
         menuButton.onclick = () => {
 
-            menu.classList.add("active");
+            menu.classList.add(
+                "active"
+            );
 
         };
 
@@ -597,47 +1017,345 @@ async function loadMagazine() {
 
         closeMenu.onclick = () => {
 
-            menu.classList.remove("active");
+            menu.classList.remove(
+                "active"
+            );
 
         };
 
     }
 
 
-    /* ================= KEYBOARD ================= */
+    /* =====================================================
+       KEYBOARD
+    ===================================================== */
 
-    document.addEventListener("keydown", (e) => {
+    document.addEventListener(
+        "keydown",
+        (e) => {
 
-        if (e.key === "ArrowRight") {
+            if (
+                e.key === "ArrowRight" &&
+                !e.target.isContentEditable
+            ) {
 
-            pageFlip.flipNext();
+                pageFlip.flipNext();
+
+            }
+
+
+            if (
+                e.key === "ArrowLeft" &&
+                !e.target.isContentEditable
+            ) {
+
+                pageFlip.flipPrev();
+
+            }
+
+
+            if (
+                e.key === "Escape"
+            ) {
+
+                menu.classList.remove(
+                    "active"
+                );
+
+            }
 
         }
-
-        if (e.key === "ArrowLeft") {
-
-            pageFlip.flipPrev();
-
-        }
-
-        if (e.key === "Escape") {
-
-            menu.classList.remove("active");
-
-        }
-
-    });
+    );
 
 
-    /* ================= INITIAL TRANSFORM ================= */
+    /* =====================================================
+       INITIAL TRANSFORM
+    ===================================================== */
 
     updateTransform();
+
+
+    /* =====================================================
+       UPDATE TEXT PANEL
+    ===================================================== */
+
+    function updateTextPanel() {
+
+        if (!textSize) return;
+
+
+        if (!activeText) {
+
+            textSize.textContent =
+                currentTextSize;
+
+            if (textColor) {
+
+                textColor.value =
+                    currentTextColor;
+
+            }
+
+            return;
+
+        }
+
+
+        const size =
+            parseFloat(
+                getComputedStyle(
+                    activeText
+                ).fontSize
+            );
+
+
+        textSize.textContent =
+            Math.round(size);
+
+
+        if (textColor) {
+
+            textColor.value =
+                rgbToHex(
+                    getComputedStyle(
+                        activeText
+                    ).color
+                );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       SAVE ALL TEXTS
+    ===================================================== */
+
+    function saveAllTexts() {
+
+        const allPages =
+            book.querySelectorAll(".page");
+
+
+        allPages.forEach(page => {
+
+            const image =
+                page.querySelector("img");
+
+
+            if (!image) return;
+
+
+            const pageKey =
+                `page-${image.getAttribute("src")}`;
+
+
+            const texts =
+                page.querySelectorAll(
+                    ".magazine-text"
+                );
+
+
+            savedTexts[pageKey] =
+                Array.from(texts).map(
+                    text => ({
+
+                        text:
+                            text.textContent,
+
+                        left:
+                            text.style.left,
+
+                        top:
+                            text.style.top,
+
+                        fontSize:
+                            parseFloat(
+                                text.style.fontSize
+                            ) || currentTextSize,
+
+                        color:
+                            text.style.color ||
+                            currentTextColor
+
+                    })
+                );
+
+        });
+
+
+        localStorage.setItem(
+            "magazine-texts",
+            JSON.stringify(savedTexts)
+        );
+
+    }
+
+
+    /* =====================================================
+       COLOR CONVERSION
+    ===================================================== */
+
+    function rgbToHex(rgb) {
+
+        if (!rgb) return "#111111";
+
+
+        if (
+            rgb.startsWith("#")
+        ) {
+            return rgb;
+        }
+
+
+        const result =
+            rgb.match(
+                /\d+/g
+            );
+
+
+        if (!result) {
+            return "#111111";
+        }
+
+
+        return "#" +
+            result
+                .slice(0, 3)
+                .map(
+                    x =>
+                        Number(x)
+                            .toString(16)
+                            .padStart(2, "0")
+                )
+                .join("");
+
+    }
+
+
+    /* =====================================================
+       CREATE TEXT ELEMENT
+    ===================================================== */
+
+    function createTextElement(
+        page,
+        pageKey,
+        value,
+        left,
+        top,
+        fontSize,
+        color
+    ) {
+
+        const text =
+            document.createElement("div");
+
+
+        text.className =
+            "magazine-text";
+
+
+        text.contentEditable =
+            "true";
+
+
+        text.spellcheck =
+            false;
+
+
+        text.textContent =
+            value;
+
+
+        text.style.left =
+            left;
+
+
+        text.style.top =
+            top;
+
+
+        text.style.fontSize =
+            `${fontSize}px`;
+
+
+        text.style.color =
+            color;
+
+
+        page.appendChild(text);
+
+
+        text.addEventListener(
+            "mousedown",
+            (e) => {
+
+                e.stopPropagation();
+
+                activeText =
+                    text;
+
+                updateTextPanel();
+
+            }
+        );
+
+
+        text.addEventListener(
+            "click",
+            (e) => {
+
+                e.stopPropagation();
+
+                activeText =
+                    text;
+
+                updateTextPanel();
+
+            }
+        );
+
+
+        text.addEventListener(
+            "input",
+            () => {
+
+                activeText =
+                    text;
+
+                saveAllTexts();
+
+            }
+        );
+
+
+        text.addEventListener(
+            "focus",
+            () => {
+
+                activeText =
+                    text;
+
+                updateTextPanel();
+
+            }
+        );
+
+
+        return text;
+
+    }
+
+
+    updateTextPanel();
 
 }
 
 
-loadMagazine().catch((error) => {
+loadMagazine().catch(
+    (error) => {
 
-    console.error(error);
+        console.error(error);
 
-});
+    }
+);

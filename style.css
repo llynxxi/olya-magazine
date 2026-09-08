@@ -947,3 +947,137 @@ body::before{
     user-select: none;
     -webkit-user-select: none;
 }
+/* =====================================================
+   TEXT WRITING ON MAGAZINE
+   ===================================================== */
+
+.magazine-text {
+    position: absolute;
+
+    z-index: 100;
+
+    min-width: 20px;
+
+    min-height: 24px;
+
+    padding: 0;
+
+    margin: 0;
+
+    color: #111;
+
+    font-family: "Times New Roman", serif;
+
+    font-size: 18px;
+
+    line-height: 1.25;
+
+    background: transparent;
+
+    border: none;
+
+    outline: none;
+
+    white-space: pre-wrap;
+
+    word-break: break-word;
+
+    cursor: text;
+
+    user-select: text;
+
+    -webkit-user-select: text;
+}
+
+
+.magazine-text:focus {
+    outline: none;
+
+    background: transparent;
+}
+
+
+.magazine-text::selection {
+    background: rgba(80, 100, 160, 0.18);
+}
+/* =====================================================
+   TEXT PANEL
+   ===================================================== */
+
+.text-panel {
+    position: fixed;
+
+    right: 35px;
+    top: 95px;
+
+    height: 55px;
+
+    padding: 0 14px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    background: rgba(255,255,255,.15);
+
+    border-radius: 30px;
+
+    backdrop-filter: blur(10px);
+
+    z-index: 500;
+}
+
+
+.text-panel button {
+    width: 35px;
+    height: 35px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: white;
+
+    color: #111;
+
+    cursor: pointer;
+
+    font-family: Arial, sans-serif;
+
+    font-size: 15px;
+}
+
+
+.text-panel button:hover {
+    opacity: .75;
+}
+
+
+#text-size {
+    min-width: 28px;
+
+    text-align: center;
+
+    color: white;
+
+    font-family: Arial, sans-serif;
+
+    font-size: 13px;
+}
+
+
+#text-color {
+    width: 35px;
+    height: 35px;
+
+    padding: 3px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: white;
+
+    cursor: pointer;
+}
