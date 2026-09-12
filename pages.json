@@ -20,7 +20,7 @@
     "title": "Tukavin"
   },
   {
-    "image": "images/Angelinna.jpg",
+    "image": "images/Angelina.jpg",
     "title": "Angelina Jolie"
   },
   {
@@ -50,6 +50,22 @@
   {
     "image": "images/Bradd.jpg",
     "title": "Brad Pitt"
+  },
+  {
+    "image": "images/Diaz.jpg",
+    "title": "Cameron Diaz"
+  },
+  {
+    "image": "images/Chan.jpg",
+    "title": "Jackie Chan"
+  },
+  {
+    "image": "images/Leo.jpg",
+    "title": "Leonardo Dicaprio"
+  },
+  {
+    "image": "images/Anne.jpg",
+    "title": "Anne Hathaway"
   },
   {
     "image": "images/coverback.jpg",

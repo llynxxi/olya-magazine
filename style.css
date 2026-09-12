@@ -728,19 +728,12 @@ body::before{
     }
 
     #menu-pages{
-        height:auto;
-        max-height:55vh;
-    }
-
-    #menu-pages p{
-        font-size:17px;
-        margin:12px 0;
-    }
-
-    .close-menu{
-        top:18px;
-        right:18px;
-    }
+    height:55vh;
+    max-height:55vh;
+    overflow-y:auto;
+    overflow-x:hidden;
+    padding-right:10px;
+}
 
     /* PREVENT TEXT SELECTION WHILE SWIPING */
 
@@ -834,6 +827,14 @@ body::before{
 
     flex: 1;
     min-height: 0;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    padding-right: 8px;
+
+    scrollbar-width: thin;
+    scrollbar-color: #aaa39a transparent;
 }
 
 
