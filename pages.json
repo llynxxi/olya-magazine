@@ -4,6 +4,10 @@
     "title": "Cover"
   },
   {
+    "image": "images/Celebrities.jpg",
+    "title": "Celebrities"
+  },
+  {
     "image": "images/alina.jpg",
     "title": "Alina Kabaeva"
   },
@@ -52,10 +56,6 @@
     "title": "Brad Pitt"
   },
   {
-    "image": "images/Diaz.jpg",
-    "title": "Cameron Diaz"
-  },
-  {
     "image": "images/LilPeep.jpg",
     "title": "Lil Peep"
   },
@@ -64,12 +64,24 @@
     "title": "Jackie Chan"
   },
   {
-    "image": "images/Leo.jpg",
+    "image": "images/Leonardo.jpg",
     "title": "Leonardo Dicaprio"
   },
   {
     "image": "images/Anne.jpg",
     "title": "Anne Hathaway"
+  },
+  {
+    "image": "images/Movies.jpg",
+    "title": "Movies"
+  },
+  {
+    "image": "images/Twilight.jpg",
+    "title": "Twilight"
+  },
+  {
+    "image": "images/Titanic.jpg",
+    "title": "Titanic"
   },
   {
     "image": "images/coverback.jpg",

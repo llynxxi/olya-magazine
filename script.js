@@ -90,8 +90,9 @@ async function loadMagazine() {
     const coverBack =
         pages[pages.length - 1];
 
+let contentPageNumber = 0;
 
-    regularPages.forEach((item, index) => {
+regularPages.forEach((item, index) => {
 
         const page =
             document.createElement("div");
@@ -225,25 +226,38 @@ async function loadMagazine() {
         ================================================= */
 
         const menuItem =
-            document.createElement("p");
+    document.createElement("p");
 
-        menuItem.textContent =
-            `${String(index + 1).padStart(2, "0")} — ${item.title}`;
+const isSection =
+    item.title === "Movies" ||
+    item.title === "Celebrities";
 
-        menuItem.style.cursor =
-            "pointer";
+contentPageNumber++;
 
-        menuItem.addEventListener("click", () => {
+menuItem.textContent =
+    isSection
+        ? item.title
+        : `${String(
+            contentPageNumber + 1
+        ).padStart(2, "0")} — ${item.title}`;
 
-            pageFlip.turnToPage(index);
+if (isSection) {
+    menuItem.classList.add("menu-section");
+}
 
-            menu.classList.remove("active");
+menuItem.style.cursor =
+    "pointer";
 
-        });
+menuItem.addEventListener("click", () => {
 
-        menuPages.appendChild(menuItem);
+    pageFlip.turnToPage(index);
 
-    });
+    menu.classList.remove("active");
+
+});
+
+menuPages.appendChild(menuItem);
+});
 
 
     /* =====================================================
@@ -279,40 +293,58 @@ async function loadMagazine() {
         `;
 
 
-        regularPages.forEach((item, index) => {
+        let contentsPageNumber = 0;
 
-            if (index === 0) return;
+regularPages.forEach((item, index) => {
 
+    if (index === 0) return;
 
-            const number =
-                String(index + 1).padStart(2, "0");
+    const isSection =
+        item.title === "Movies" ||
+        item.title === "Celebrities";
 
+    if (isSection) {
 
-            contentsHTML += `
-                <div
-                    class="contents-item"
-                    data-page="${index}"
-                >
+        contentsHTML += `
+            <div class="contents-section">
+                <span></span>
+                <strong>${item.title}</strong>
+                <span></span>
+            </div>
+        `;
 
-                    <span class="contents-number">
-                        ${number}
-                    </span>
+        return;
+    }
 
-                    <span class="contents-title">
-                        ${item.title}
-                    </span>
+    const number =
+        item.title === "Twilight"
+            ? "20"
+            : String(index + 1).padStart(2, "0");
 
-                    <span class="contents-dots"></span>
+    contentsHTML += `
+        <div
+            class="contents-item"
+            data-page="${index}"
+        >
 
-                    <span class="contents-arrow">
-                        →
-                    </span>
+            <span class="contents-number">
+                ${number}
+            </span>
 
-                </div>
-            `;
+            <span class="contents-title">
+                ${item.title}
+            </span>
 
-        });
+            <span class="contents-dots"></span>
 
+            <span class="contents-arrow">
+                →
+            </span>
+
+        </div>
+    `;
+
+});
 
         contentsHTML += `
                 </div>
@@ -416,7 +448,7 @@ async function loadMagazine() {
         document.createElement("p");
 
     backMenuItem.textContent =
-        `${String(pages.length).padStart(2, "0")} — ${coverBack.title}`;
+    `${String(regularPages.length + 2).padStart(2, "0")} — ${coverBack.title}`;
 
     backMenuItem.style.cursor =
         "pointer";

@@ -250,6 +250,29 @@ body::before{
     cursor:pointer;
 
 }
+/* ================= MENU SCROLL FIX ================= */
+
+.menu {
+    overflow: hidden;
+}
+
+.menu-content {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 10px;
+
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,.35) transparent;
+}
+
+#menu-pages {
+    height: auto;
+    max-height: none;
+    overflow: visible;
+    padding-right: 0;
+}
 
 
 
@@ -1080,5 +1103,18 @@ body::before{
 
     background: white;
 
+    cursor: pointer;
+}
+.menu-section {
+    margin-top: 24px;
+    margin-bottom: 12px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.25);
+
+    font-size: 14px !important;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+
+    opacity: 0.65;
     cursor: pointer;
 }
