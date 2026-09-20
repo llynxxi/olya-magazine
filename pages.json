@@ -64,10 +64,6 @@
     "title": "Jackie Chan"
   },
   {
-    "image": "images/Leonardo.jpg",
-    "title": "Leonardo Dicaprio"
-  },
-  {
     "image": "images/Anne.jpg",
     "title": "Anne Hathaway"
   },
@@ -82,6 +78,10 @@
   {
     "image": "images/Titanic.jpg",
     "title": "Titanic"
+  },
+  {
+    "image": "images/Pretty woman.jpg",
+    "title": "Pretty woman"
   },
   {
     "image": "images/coverback.jpg",
