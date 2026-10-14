@@ -100,9 +100,13 @@
     "title": "Lord"
   },
   {
-    "image": "images/Ghost.jpg",
-    "title": "Ghost"
-  },
+  "image": "images/Devil wears Prada.jpg",
+  "title": "Devil wears Prada"
+},
+{
+  "image": "images/Ghost.jpg",
+  "title": "Ghost"
+},
   {
     "image": "images/coverback.jpg",
     "title": "Coverback"
