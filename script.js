@@ -229,8 +229,8 @@ regularPages.forEach((item, index) => {
     document.createElement("p");
 
 const isSection =
-    item.title === "Movies" ||
-    item.title === "Celebrities";
+    ["Movies", "Celebrities", "Stories", "Songs"]
+        .includes(item.title);
 
 contentPageNumber++;
 

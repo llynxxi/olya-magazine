@@ -107,8 +107,24 @@
   "image": "images/Ghost.jpg",
   "title": "Ghost"
 },
-  {
-    "image": "images/coverback.jpg",
-    "title": "Coverback"
-  }
+{
+  "image": "images/IT.jpg",
+  "title": "IT"
+},
+{
+  "image": "images/Stories.jpg",
+  "title": "Stories"
+},
+{
+  "image": "images/The story of Emma.jpg",
+  "title": "The story of Emma"
+},
+{
+  "image": "images/Songs.jpg",
+  "title": "Songs"
+},
+{
+  "image": "images/coverback.jpg",
+  "title": "Coverback"
+}
 ]
