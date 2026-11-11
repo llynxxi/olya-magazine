@@ -1,0 +1,23 @@
+[1mdiff --cc pages.json[m
+[1mindex c9e3564,967f8f4..0000000[m
+[1m--- a/pages.json[m
+[1m+++ b/pages.json[m
+[36m@@@ -140,13 -140,9 +140,13 @@@[m
+    "title": "Songs"[m
+  },[m
+  {[m
+[31m-   "image": "images/Don't Speak.jpg",[m
+[31m-   "title": "Don't Speak"[m
+[31m -    "image": "images/No doubt.jpg",[m
+[31m -    "title": "No doubt"[m
+[31m -  },[m
+[32m++  "image": "images/No doubt.jpg",[m
+[32m++  "title": "No doubt"[m
+[32m +},[m
+[32m +{[m
+[32m +  "image": "images/Coldplay.jpg",[m
+[32m +  "title": "Coldplay"[m
+[32m +},[m
+  {[m
+    "image": "images/coverback.jpg",[m
+    "title": "Coverback"[m
