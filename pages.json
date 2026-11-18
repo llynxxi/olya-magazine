@@ -140,6 +140,10 @@
   "title": "The lost letter"
 },
 {
+  "image": "images/Homeless.jpg",
+  "title": "Homeless"
+},
+{
   "image": "images/Songs.jpg",
   "title": "Songs"
 },
@@ -150,6 +154,10 @@
 {
   "image": "images/Coldplay.jpg",
   "title": "Coldplay"
+},
+{
+  "image": "images/OneD.jpg",
+  "title": "One Direction"
 },
 {
   "image": "images/coverback.jpg",
